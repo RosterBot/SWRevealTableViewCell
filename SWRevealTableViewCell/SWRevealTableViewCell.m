@@ -82,9 +82,12 @@ static UIImage* _imageWithColor_size(UIColor* color, CGSize size)
 @class SWUtilityContentView;
 
 @interface SWCellButtonItem()
-@property(nonatomic,strong) BOOL (^handler)(SWCellButtonItem *, SWRevealTableViewCell*);
 @property(nonatomic,assign) SWUtilityContentView *view;  // Note that we do not retain this
 @property(nonatomic,readonly) BOOL isOpaque;
+
+@property(nonatomic,weak) UIView *buttonView;
+@property(nonatomic,weak) UIButton *button;
+
 @end
 
 @implementation SWCellButtonItem
@@ -100,6 +103,13 @@ static UIImage* _imageWithColor_size(UIColor* color, CGSize size)
     return self;
 }
 
+- (UIFont*)textFont
+{
+    if ( !_textFont ) {
+        _textFont = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
+    }
+    return _textFont;
+}
 
 - (id)initWithTitle:(NSString *)title
 {
@@ -542,6 +552,9 @@ static const CGFloat OverDrawWidth = 60;
         button.frame = utilityButtonView.bounds;
         button.titleLabel.numberOfLines = 0;
         button.titleLabel.textAlignment = NSTextAlignmentCenter;
+        if ( item.textColor ) {
+            [button setTitleColor:item.textColor forState:UIControlStateNormal];
+        }
         button.item = item;
         
         // Depending on actual item properties, we configure the button to make the best of it
@@ -569,10 +582,16 @@ static const CGFloat OverDrawWidth = 60;
         [button setTintColor:tintColor];
         [button setTitle:title forState:UIControlStateNormal];
         [button setImage:image forState:UIControlStateNormal];
-        
+
         // add button to its utiliyButtonView
         [utilityButtonView addSubview:button];
         [*views addObject:utilityButtonView];
+
+        item.button = button;
+        item.buttonView = utilityButtonView;
+        if ( item.decorateBlock ) {
+            item.decorateBlock(item);
+        }
         
         // add utilityButtonView
         if ( reversed ) [self insertSubview:utilityButtonView atIndex:0];

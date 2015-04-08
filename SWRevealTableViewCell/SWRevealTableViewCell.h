@@ -72,6 +72,8 @@
    instead, a handler block must be provided to execute derived actions 
 */
 
+@class SWUtilityContentView;
+
 @interface SWCellButtonItem : NSObject
 
 // Cell Button Item initialization
@@ -86,6 +88,13 @@
 @property(nonatomic) UIColor *tintColor;         // default is nil
 @property(nonatomic) NSString *title;            // default is nil
 @property(nonatomic) UIVisualEffect *visualEffect;
+@property(nonatomic,copy) BOOL (^handler)(SWCellButtonItem *, SWRevealTableViewCell*);
+@property(nonatomic,copy) void (^decorateBlock)(SWCellButtonItem *);
+@property(nonatomic,weak,readonly) SWUtilityContentView *view;  // Note that we do not retain this
+@property(nonatomic) UIFont *textFont;
+@property(nonatomic) UIColor *textColor;
+@property(nonatomic,weak,readonly) UIView *buttonView;
+@property(nonatomic,weak,readonly) UIButton *button;
 
 @end
 
